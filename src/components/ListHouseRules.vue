@@ -1,8 +1,5 @@
 <template>
   <q-layout>
-    <ul>
-      <li v-for="(rule, index) in houseRules" :key="index">{{ rule }}</li>
-    </ul>
     <div class="q-pa-md">
       <q-table
         title="House Rules"
@@ -18,7 +15,7 @@
         </template>
       </q-table>
     </div>
-    <q-dialog v-model="showModal">
+    <q-dialog v-model="showModal" style="min-height: 100vh">
       <q-card class="msb-card-dialog">
         <q-card-section> Update Rule ✏️ </q-card-section>
         <q-card-section>
@@ -28,13 +25,11 @@
         </q-card-section>
         <q-card-section>
           <q-btn
-            label="Salvar"
+            label="Save"
+            color="primary"
             @click="updateHouseRule(editData.id, editData)"
           />
-          <q-btn
-            label="Fechar"
-            @click="updateHouseRule(editData.id, editData)"
-          />
+          <q-btn label="Close" v-close-popup />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -117,6 +112,13 @@ export default defineComponent({
       if (updatedRuleIndex !== -1) {
         this.houseRules.splice(updatedRuleIndex, 1, response);
       }
+      this.refreshTable();
+    },
+
+    refreshTable() {
+      listHouseRules().then((data) => {
+        this.houseRules = data.data.entities;
+      });
     },
 
     openEditModal(row) {
