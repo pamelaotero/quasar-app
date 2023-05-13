@@ -1,10 +1,19 @@
 <template>
-  <q-toolbar-title> House Rules List 🏚️ </q-toolbar-title>
+  <div>
+    <q-toolbar-title> House Rules List 🏚️ </q-toolbar-title>
+    <q-list bordered>
+      <q-item v-for="(rule, index) in houseRules" :key="index">
+        <q-item-section>
+          <q-item-label>{{ rule.description }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { getHouseRules } from "../api/services/ApiServices.js";
+import { listHouseRules } from "../api/services/ApiServices.js";
 
 export default defineComponent({
   name: "ListHouseRules",
@@ -14,9 +23,15 @@ export default defineComponent({
       required: true,
     },
   },
+  data() {
+    return {
+      houseRules: [],
+    };
+  },
   created() {
-    getHouseRules().then((data) => {
-      console.log(data);
+    listHouseRules().then((data) => {
+      console.log("data:🚩", data);
+      this.houseRules = data;
     });
   },
 });

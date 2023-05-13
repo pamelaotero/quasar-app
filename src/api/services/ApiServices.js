@@ -3,7 +3,7 @@
 
 const { instance } = require("./AuthService");
 
-export async function getHouseRules() {
+export async function listHouseRules() {
   try {
     const response = await instance.get("house_rules");
     console.log("chegou aqui:", response.data);
@@ -13,4 +13,4 @@ export async function getHouseRules() {
   }
 }
 
-getHouseRules();
+listHouseRules();
