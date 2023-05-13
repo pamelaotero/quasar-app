@@ -1,21 +1,27 @@
 <template>
   <q-layout>
-    <div class="q-pa-md">
+    <div class="q-pa-md pt-50">
+      <q-btn color="primary" label="CREATE NEW RULE" icon="add" />
       <q-table
         title="House Rules"
         :rows="houseRules"
         :columns="columns"
         row-key="name"
+        rows-per-page-label="10"
       >
         <template v-slot:body-cell-edit="props">
           <q-td :props="props">
-            <q-btn label="EDIT" @click="openEditModal(props.row)" />
+            <q-btn label="EDIT" @click="openEditModal(props.row)" icon="edit" />
             <div class="my-table-details">{{ props.row.details }}</div>
           </q-td>
         </template>
         <template v-slot:body-cell-delete="props">
           <q-td :props="props">
-            <q-btn label="DELETE" @click="deleteHouseRules(props.row.id)" />
+            <q-btn
+              label="DELETE"
+              @click="deleteHouseRules(props.row.id)"
+              icon="delete"
+            />
             <div class="my-table-details">{{ props.row.details }}</div>
           </q-td>
         </template>
