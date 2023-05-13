@@ -1,6 +1,3 @@
-// diretório services contém arquivos que definem funções que fazem solicitações HTTP para a API.
-//  Esses arquivos devem conter métodos para as operações CRUD (GET, POST, PUT e DELETE) e outras operações específicas da API.
-
 const { instance } = require("./AuthService");
 
 export async function listHouseRules() {
