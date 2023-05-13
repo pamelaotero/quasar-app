@@ -7,14 +7,22 @@
         :columns="columns"
         row-key="name"
       >
-        <template v-slot:body-cell-action="props">
+        <template v-slot:body-cell-edit="props">
           <q-td :props="props">
             <q-btn label="EDIT" @click="openEditModal(props.row)" />
             <div class="my-table-details">{{ props.row.details }}</div>
           </q-td>
         </template>
+        <template v-slot:body-cell-delete="props">
+          <q-td :props="props">
+            <q-btn label="DELETE" @click="deleteHouseRules(props.row.id)" />
+            <div class="my-table-details">{{ props.row.details }}</div>
+          </q-td>
+        </template>
       </q-table>
     </div>
+
+    <!-- ACTION: EDIT -->
     <q-dialog v-model="showModal" style="min-height: 100vh">
       <q-card class="msb-card-dialog">
         <q-card-section> Update Rule ✏️ </q-card-section>
@@ -41,6 +49,7 @@ import { defineComponent } from "vue";
 import {
   listHouseRules,
   updateHouseRules,
+  deleteHouseRules,
 } from "../api/services/ApiServices.js";
 
 export default defineComponent({
@@ -85,9 +94,15 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "action",
-          label: "ACTION",
-          field: "action",
+          name: "edit",
+          label: "EDIT",
+          field: "edit",
+          align: "right",
+        },
+        {
+          name: "delete",
+          label: "DELETE",
+          field: "delete",
           align: "right",
         },
       ],
@@ -112,6 +127,12 @@ export default defineComponent({
       if (updatedRuleIndex !== -1) {
         this.houseRules.splice(updatedRuleIndex, 1, response);
       }
+      this.refreshTable();
+    },
+
+    async deleteHouseRules(id) {
+      await deleteHouseRules(id);
+      this.houseRules = this.houseRules.filter((rule) => rule.id !== id);
       this.refreshTable();
     },
 
