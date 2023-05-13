@@ -1,14 +1,9 @@
 <template>
-  <div>
-    <q-toolbar-title> House Rules List 🏚️ </q-toolbar-title>
-    <q-list bordered>
-      <q-item v-for="(rule, index) in houseRules" :key="index">
-        <q-item-section>
-          <q-item-label>{{ rule.description }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
-  </div>
+  <q-layout>
+    <ul>
+      <li v-for="(rule, index) in houseRules" :key="index">{{ rule }}</li>
+    </ul>
+  </q-layout>
 </template>
 
 <script>
@@ -30,8 +25,11 @@ export default defineComponent({
   },
   created() {
     listHouseRules().then((data) => {
-      console.log("data:🚩", data);
-      this.houseRules = data;
+      console.log(
+        "dataaa🚩",
+        data.data.entities.map((entity) => entity.name)
+      );
+      this.houseRules = data.data.entities.map((entity) => entity.name);
     });
   },
 });

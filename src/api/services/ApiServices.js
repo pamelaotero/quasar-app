@@ -13,4 +13,6 @@ export async function listHouseRules() {
   }
 }
 
+// aqui vai as outras funções CRUD
+
 listHouseRules();
