@@ -23,16 +23,6 @@
   </q-layout>
 </template>
 
-<style>
-.my-table-details {
-  font-size: 0.85em;
-  font-style: italic;
-  max-width: 200px;
-  white-space: normal;
-  color: #555;
-  margin-top: 4px;
-}
-</style>
 <script>
 import { defineComponent } from "vue";
 import { listHouseRules } from "../api/services/ApiServices.js";
