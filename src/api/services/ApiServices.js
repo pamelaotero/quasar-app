@@ -10,6 +10,15 @@ export async function listHouseRules() {
   }
 }
 
-// aqui vai as outras funções CRUD
+export async function updateHouseRules(id, updatedData) {
+  try {
+    const response = await instance.put(`house_rules/${id}`, updatedData);
+    console.log("chegou aqui:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 listHouseRules();
+updateHouseRules();
