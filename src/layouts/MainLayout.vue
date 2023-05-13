@@ -1,11 +1,5 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header>
-      <q-toolbar>
-        <q-btn icon="menu" flat></q-btn>
-        <q-toolbar-title>Search and Stay - House Rules 🏚️</q-toolbar-title>
-      </q-toolbar>
-    </q-header>
     <ListHouseRules />
     <q-page-container>
       <router-view />
