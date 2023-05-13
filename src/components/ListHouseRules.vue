@@ -12,20 +12,41 @@
       >
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
-            <q-btn>EDIT</q-btn>
-            <div class="my-table-details">
-              {{ props.row.details }}
-            </div>
+            <q-btn label="EDIT" @click="openEditModal(props.row)" />
+            <div class="my-table-details">{{ props.row.details }}</div>
           </q-td>
         </template>
       </q-table>
     </div>
+    <q-dialog v-model="showModal">
+      <q-card class="msb-card-dialog">
+        <q-card-section> Update Rule ✏️ </q-card-section>
+        <q-card-section>
+          <q-input label="Name" v-model="editData.name" />
+          <q-input label="Active" v-model="editData.active" />
+          <q-input label="Order" v-model="editData.order" />
+        </q-card-section>
+        <q-card-section>
+          <q-btn
+            label="Salvar"
+            @click="updateHouseRule(editData.id, editData)"
+          />
+          <q-btn
+            label="Fechar"
+            @click="updateHouseRule(editData.id, editData)"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { listHouseRules } from "../api/services/ApiServices.js";
+import {
+  listHouseRules,
+  updateHouseRules,
+} from "../api/services/ApiServices.js";
 
 export default defineComponent({
   name: "ListHouseRules",
@@ -38,7 +59,6 @@ export default defineComponent({
   data() {
     return {
       houseRules: [],
-
       columns: [
         {
           name: "id",
@@ -76,6 +96,9 @@ export default defineComponent({
           align: "right",
         },
       ],
+
+      editData: {},
+      showModal: false,
     };
   },
   created() {
@@ -95,9 +118,12 @@ export default defineComponent({
         this.houseRules.splice(updatedRuleIndex, 1, response);
       }
     },
-    editRow(row) {
-      console.log("Editing row:", row);
-      // Chame sua função de atualização aqui
+
+    openEditModal(row) {
+      this.editData = row;
+      console.log("showModal", this.showModal);
+      this.showModal = true;
+      console.log("modal aberta:", this.showModal);
     },
   },
 });

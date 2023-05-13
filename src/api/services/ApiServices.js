@@ -12,7 +12,9 @@ export async function listHouseRules() {
 
 export async function updateHouseRules(id, updatedData) {
   try {
-    const response = await instance.put(`house_rules/${id}`, updatedData);
+    const response = await instance.put(`house_rules/${id}`, {
+      house_rules: updatedData,
+    });
     console.log("chegou aqui:", response.data);
     return response.data;
   } catch (error) {
