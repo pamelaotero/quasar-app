@@ -1,15 +1,20 @@
 <template>
   <q-layout>
     <div class="q-pa-md pt-50">
-      <q-input v-model="filterID" label="Search by Rule ID" />
-      <q-btn label="FILTER" @click="filterRuleById(filterID)" icon="search" />
+      <div>
+        <q-input v-model="filterID" label="Search by Rule ID">
+          <q-btn @click="filterRuleById(filterID)" icon="search" />
+        </q-input>
+      </div>
       <q-btn
         @click="openModalCreate()"
         color="primary"
         label="CREATE NEW RULE"
         icon="add"
       />
+      <q-btn @click="refreshTable()" label="CLEAN FILTER" />
       <q-table
+        v-if="!loading"
         title="House Rules"
         :rows="houseRules"
         :columns="columns"
@@ -32,6 +37,14 @@
           </q-td>
         </template>
       </q-table>
+
+      <q-spinner
+        size="50px"
+        color="primary"
+        class="justify-center q-mt-md"
+        v-if="loading"
+      />
+
       <div class="row justify-center q-mt-md">
         <q-pagination
           v-model="current_page"
@@ -162,6 +175,7 @@ export default defineComponent({
       linkNext: null,
       linkPrev: null,
       filterID: null,
+      loading: false,
     };
   },
   created() {
@@ -181,6 +195,8 @@ export default defineComponent({
   methods: {
     async loadHouseRules() {
       try {
+        this.loading = true;
+
         const { data } = await listHouseRules({
           page: this.page,
           per_page: this.perPage,
@@ -189,6 +205,8 @@ export default defineComponent({
         this.$store.commit("setPagination", data.data.pagination);
       } catch (error) {
         console.error(error);
+      } finally {
+        this.loading = false;
       }
     },
 
