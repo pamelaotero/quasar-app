@@ -1,13 +1,19 @@
 <template>
   <q-layout>
     <div class="q-pa-md pt-50">
-      <q-btn color="primary" label="CREATE NEW RULE" icon="add" />
+      <q-input v-model="filterID" label="Search by Rule ID" />
+      <q-btn label="FILTER" @click="filterRuleById(filterID)" icon="search" />
+      <q-btn
+        @click="openModalCreate()"
+        color="primary"
+        label="CREATE NEW RULE"
+        icon="add"
+      />
       <q-table
         title="House Rules"
         :rows="houseRules"
         :columns="columns"
         row-key="name"
-        rows-per-page-label="10"
       >
         <template v-slot:body-cell-edit="props">
           <q-td :props="props">
@@ -26,6 +32,16 @@
           </q-td>
         </template>
       </q-table>
+      <div class="row justify-center q-mt-md">
+        <q-pagination
+          v-model="current_page"
+          color="grey-8"
+          :max="total_pages"
+          :input="true"
+          :min="1"
+          :no-ripple="true"
+        />
+      </div>
     </div>
 
     <!-- ACTION: EDIT -->
@@ -47,6 +63,25 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <!-- ACTION: CREATE -->
+    <q-dialog v-model="showModalCreate" style="min-height: 100vh">
+      <q-card class="msb-card- dialog">
+        <q-card-section> Create Rule ➕ </q-card-section>
+        <q-card-section>
+          <q-input label="Name" v-model="createData.name" />
+          <q-input label="Active" v-model="createData.active" />
+        </q-card-section>
+        <q-card-section>
+          <q-btn
+            label="Save"
+            color="primary"
+            @click="createNewHouseRule(createData)"
+          />
+          <q-btn label="Close" v-close-popup />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -56,6 +91,8 @@ import {
   listHouseRules,
   updateHouseRules,
   deleteHouseRules,
+  createHouseRules,
+  filterRuleById,
 } from "../api/services/ApiServices.js";
 
 export default defineComponent({
@@ -66,6 +103,7 @@ export default defineComponent({
       required: true,
     },
   },
+
   data() {
     return {
       houseRules: [],
@@ -112,19 +150,48 @@ export default defineComponent({
           align: "right",
         },
       ],
-
       editData: {},
+      createData: {},
       showModal: false,
+      showModalCreate: false,
+      total: null,
+      coun: null,
+      per_page: null,
+      current_page: null,
+      total_pages: null,
+      linkNext: null,
+      linkPrev: null,
+      filterID: null,
     };
   },
   created() {
+    this.loadHouseRules();
     listHouseRules().then((data) => {
-      console.log("dataaa🚩", data.data.entities);
       this.houseRules = data.data.entities;
+      this.total = data.data.pagination.total;
+      this.count = data.data.pagination.count;
+      this.per_page = data.data.pagination.per_page;
+      this.current_page = data.data.pagination.current_page;
+      this.total_pages = data.data.pagination.total_pages;
+      this.linkNext = data.data.pagination.links.next;
+      this.linkPrev = data.data.pagination.links.prev;
     });
   },
 
   methods: {
+    async loadHouseRules() {
+      try {
+        const { data } = await listHouseRules({
+          page: this.page,
+          per_page: this.perPage,
+        });
+        this.houseRules = data.data.pagination;
+        this.$store.commit("setPagination", data.data.pagination);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     async updateHouseRule(id, updatedData) {
       const response = await updateHouseRules(id, updatedData);
       const updatedRuleIndex = this.houseRules.findIndex(
@@ -136,10 +203,32 @@ export default defineComponent({
       this.refreshTable();
     },
 
+    async createNewHouseRule(houseRuleData) {
+      const obj = { name: houseRuleData.name, active: houseRuleData.active };
+      const newObj = {
+        house_rules: {
+          name: obj.name.toString(),
+          active: parseInt(obj.active),
+        },
+      };
+      const response = await createHouseRules(JSON.stringify(newObj));
+      this.houseRules.push(response);
+      this.refreshTable();
+    },
+
     async deleteHouseRules(id) {
       await deleteHouseRules(id);
       this.houseRules = this.houseRules.filter((rule) => rule.id !== id);
       this.refreshTable();
+    },
+
+    async filterRuleById(id) {
+      await filterRuleById(id);
+      this.houseRules = this.houseRules.filter((rule) => rule.id == id);
+
+      if (!id) {
+        this.refreshTable();
+      }
     },
 
     refreshTable() {
@@ -148,11 +237,13 @@ export default defineComponent({
       });
     },
 
+    openModalCreate() {
+      this.showModalCreate = true;
+    },
+
     openEditModal(row) {
       this.editData = row;
-      console.log("showModal", this.showModal);
       this.showModal = true;
-      console.log("modal aberta:", this.showModal);
     },
   },
 });
