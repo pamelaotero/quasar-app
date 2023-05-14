@@ -3,7 +3,6 @@ const { instance } = require("./AuthService");
 export async function listHouseRules() {
   try {
     const response = await instance.get("house_rules");
-    console.log("chegou aqui get list all:", response.data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -13,7 +12,6 @@ export async function listHouseRules() {
 export async function filterRuleById(id) {
   try {
     const response = await instance.get(`house_rules/${id}`);
-    console.log("filtro aqui:", response.data);
     return response.data;
   } catch (error) {
     console.error(error);
